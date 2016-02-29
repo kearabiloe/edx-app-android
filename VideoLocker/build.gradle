@@ -286,6 +286,7 @@ android.applicationVariants.all { variant ->
 }
 
 
+/*
 apply plugin: 'com.github.triplet.play'
 
 
@@ -304,4 +305,4 @@ play {
 project.afterEvaluate {
     def generateReleasePlayResources = project.tasks.getByName("publishProdRelease")
     generateReleasePlayResources.dependsOn generateScreenshots
-}
+}*/
