@@ -4,7 +4,7 @@ emulator -avd test -no-skin -no-audio -no-window &
 android-wait-for-emulator
 adb shell input keyevent 82 &
 adb install -r build/outputs/apk/VideoLocker-prod-release.apk
-AppPackage=<package>
+AppPackage=org.edx.mobile
 ScreenshotsDir=src/main/play/en-GB/listing/phoneScreenshots
 adb shell am start -n $AppPackage/.view.LoginActivity -W
 adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > $ScreenshotsDir/LoginActivity.png
