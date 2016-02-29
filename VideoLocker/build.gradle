@@ -286,17 +286,16 @@ android.applicationVariants.all { variant ->
 }
 
 
-/*
+
 apply plugin: 'com.github.triplet.play'
 
 
 task generateScreenshots(type: Exec) {
-    commandLine './../generate_screenshots.sh'
+    commandLine './generate_screenshots.sh'
 }
 
 play {
-    serviceAccountEmail = ''
-    pk12File = file('')
+    jsonFile = file('Google Play Android Developer-19b02b1c88b4.json')
     track = 'production' // or 'rollout' or 'beta' or 'alpha'
     uploadImages = true
     errorOnSizeLimit = false
@@ -305,4 +304,4 @@ play {
 project.afterEvaluate {
     def generateReleasePlayResources = project.tasks.getByName("publishProdRelease")
     generateReleasePlayResources.dependsOn generateScreenshots
-}*/
+}
