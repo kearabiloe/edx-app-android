@@ -41,7 +41,6 @@ after_script:
 #  - curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install | bash
 #  - ~/bin/artifacts upload artifacts
   - ./gradlew assembleProdRelease
-  - ./gradlew generateScreenshots
   -  ./gradlew publishProdRelease
 
 branches:
