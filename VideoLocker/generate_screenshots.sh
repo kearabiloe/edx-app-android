@@ -4,7 +4,7 @@ echo no | android create avd --force -n test -t android-23 --abi default/armeabi
 emulator -avd test -no-skin -no-audio -no-window &
 android-wait-for-emulator
 adb shell input keyevent 82 &
-./gradlew assembleProdRelease
+./../gradlew assembleProdRelease
 adb install -r build/outputs/apk/VideoLocker-prod-release.apk
 AppPackage=org.edx.mobile
 ScreenshotsDir=src/main/play/en-GB/listing/phoneScreenshots
