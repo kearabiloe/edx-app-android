@@ -302,6 +302,6 @@ play {
 }
 
 project.afterEvaluate {
-    def generateReleasePlayResources = project.tasks.getByName("publishProdRelease")
+    def generateReleasePlayResources = project.tasks.getByName("generateReleasePlayResources")
     generateReleasePlayResources.dependsOn generateScreenshots
 }
