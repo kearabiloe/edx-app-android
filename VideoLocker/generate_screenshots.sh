@@ -21,4 +21,5 @@ adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > $ScreenshotsDir/LaunchAc
 adb shell am force-stop $AppPackage
 adb shell am start -n $AppPackage/.view.MyCoursesListActivity -W
 adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > $ScreenshotsDir/MyCoursesListActivity.png
+adb shell am force-stop $AppPackage
 exit 0;
