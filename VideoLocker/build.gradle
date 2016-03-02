@@ -300,8 +300,8 @@ play {
     uploadImages = true
     errorOnSizeLimit = false
 }
-
+/*
 project.afterEvaluate {
     def generateReleasePlayResources = project.tasks.getByName("generateProdReleasePlayResources")
     generateReleasePlayResources.dependsOn generateScreenshots
-}
+}*/
