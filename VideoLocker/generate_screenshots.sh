@@ -19,5 +19,4 @@ adb shell am force-stop $AppPackage
 adb shell am start -n $AppPackage/.view.LaunchActivity -W
 adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > $ScreenshotsDir/LaunchActivity.png
 adb shell am force-stop $AppPackage
-adb kill-all	
 exit 0;
