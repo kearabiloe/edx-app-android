@@ -19,8 +19,6 @@ adb shell am force-stop $AppPackage
 adb shell am start -n $AppPackage/.view.LaunchActivity -W
 adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > $ScreenshotsDir/LaunchActivity.png
 adb shell am force-stop $AppPackage
-adb shell am start -n $AppPackage/.view.MyCoursesListActivity -W
-adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g' > $ScreenshotsDir/MyCoursesListActivity.png
-adb shell am force-stop $AppPackage
+adb kill-all	
 adb reboot bootloader #Kill emulator workaround
 exit 0;
