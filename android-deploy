@@ -7,9 +7,6 @@ wget http://dl.google.com/android/android-sdk_r24.2-linux.tgz
 tar -xvf android-sdk_r24.2-linux.tgz
 cd android-sdk-linux/tools
 
-# install all sdk packages
-./android update sdk --no-ui
-
 # set path
 sudo vi /etc/profile << EOT
 export ANDROID_HOME=~/android-sdk-linux
@@ -18,6 +15,11 @@ export PATH=$ANDROID_HOME/platform-tools:$PATH
 EOT
 
 source /etc/profile
+
+# install all sdk packages
+( sleep 5 && while [ 1 ]; do sleep 1; echo y; done )| android update sdk --no-ui --all --filter tool,extra-android-m2repository,extra-android-support,extra-google-google_play_services,extra-google-m2repository,android-23
+( sleep 5 && while [ 1 ]; do sleep 1; echo y; done )| android update sdk --no-ui --all --filter build-tools-23.0.2
+
 
 # adb
 sudo apt-get install android-tools-adb
