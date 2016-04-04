@@ -1,10 +1,25 @@
-cd /opt/
-wget http://dl.google.com/android/android-sdk_r24.4.1-linux.tgz
-tar zxvf android-sdk_r24.4.1-linux.tgz
-rm android-sdk_r24.4.1-linux.tgz
-chmod a+x android-sdk-linux/tools/android
-export ANDROID_HOME="/opt/android-sdk-linux"
-export PATH="$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools:$PATH"
-( sleep 5 && while [ 1 ]; do sleep 1; echo y; done )| android update sdk --no-ui --all --filter tool,extra-android-m2repository,extra-android-support,extra-google-google_play_services,extra-google-m2repository,android-23
-( sleep 5 && while [ 1 ]; do sleep 1; echo y; done )| android update sdk --no-ui --all --filter build-tools-23.0.2
+# install openjdk
+sudo apt-get install openjdk-7-jdk
 
+# download android sdk
+wget http://dl.google.com/android/android-sdk_r24.2-linux.tgz
+
+tar -xvf android-sdk_r24.2-linux.tgz
+cd android-sdk-linux/tools
+
+# install all sdk packages
+./android update sdk --no-ui
+
+# set path
+vi /etc/profile << EOT
+
+export PATH=${PATH}:$HOME/sdk/android-sdk-linux/platform-tools:$HOME/sdk/android-sdk-linux/tools:$HOME/sdk/android-sdk-linux/build-tools/22.0.1/
+
+EOT
+
+source /etc/profile
+
+# adb
+sudo apt-get install libc6:i386 libstdc++6:i386
+# aapt
+sudo apt-get install zlib1g:i386
