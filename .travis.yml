@@ -1,43 +1,55 @@
 language: android
-jdk: oraclejdk7
-sudo: false # Explicitly use container-based infrastructure http://docs.travis-ci.com/user/workers/container-based-infrastructure/
+jdk: oraclejdk8
+sudo: required
+dist: precise # For 7.5GB of memory since the emulator requires a big chunk.
 env:
   matrix:
-    - ANDROID_TARGET=android-23
+    - ANDROID_TARGET=android-27
+  global:
+    - ADB_INSTALL_TIMEOUT=12
 android:
   components:
-    # use the latest revision of Android SDK Tools
-    - platform-tools
     - tools
-
+    - platform-tools
     # The BuildTools version used
-    - build-tools-23.0.2
-
+    - build-tools-27.0.3
     # The SDK version used to compile the project
-    - android-23
-
+    - android-27
     # Additional components
     - extra-google-m2repository
     - extra-android-m2repository
 
-# Disable travis email notifications until builds work properly
+licenses:
+  - 'android-sdk-license-.+'
+  - '.+'
+
 notifications:
   email: true
 
 before_script:
+  - git fetch --tags
+  - git fetch --unshallow || true
+  - export DESCRIBE=$(git describe)
+  - export PR=https://api.github.com/repos/$TRAVIS_REPO_SLUG/pulls/$TRAVIS_PULL_REQUEST
+  - export BRANCH=$(if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then echo $TRAVIS_BRANCH; else echo `curl -s $PR | jq -r .head.ref`; fi)
+  - echo "TRAVIS_BRANCH=$TRAVIS_BRANCH, PR=$PR, BRANCH=$BRANCH, DESCRIBE=$DESCRIBE"
   - chmod +x gradlew
-#  - chmod +x travis-acceptance-tests.sh
+  # Begin spinning up an emulator in the background
+  - make emulator
 
 script:
-# --debug or --info info flag can be suffixed to following command for more detailed logs of tests
-# It comes in handy to see stacktraces from test failures, which otherwise aren't printed
-# P.S. --debug flag prints too many logs that are mostly not needed, which make it exceed the
-#      4mb limit enforced by travis (so use it with caution)
-  - ./gradlew testProdDebugUnitTestCoverage
-  - ./gradlew copyUnitTestBuildArtifacts
-#  - ./travis-acceptance-tests.sh
+  - make quality
+  - make test
+  # Check if emulator has finished booting
+  - android-wait-for-emulator
+  - adb shell input keyevent 82 &
+  - travis_wait make e2e
+  # Script to print lint information in logs.
+  - ./gradlew lintProdDebug --info
 
 after_script:
+  - make artifacts
+  - mv OpenEdXMobile/screenshots artifacts/
   - curl -sL https://raw.githubusercontent.com/travis-ci/artifacts/master/install | bash
   - ~/bin/artifacts upload artifacts
 
@@ -51,6 +63,22 @@ cache:
     - $HOME/.gradle
 
 before_install:
+  - mkdir "$ANDROID_HOME/licenses" || true
+  # Added cuz Travis doesn't accept license agreements of ConstraintLayout.
+  # To fix it, we are copying the licenses that come with the SDK to Travis's directory.
+  # Reference: https://github.com/wolkenschieber/License/blob/master/.travis.yml#L35
+  - cp ./android-sdk-licenses/* "$ANDROID_HOME/licenses/"
   - pip install --user codecov
+  - pip install --user pillow # For screenshot tests
+
+sudo: required
 after_success:
   - codecov
+  - pip install virtualenv
+  - virtualenv ~/env
+  - source ~/env/bin/activate
+  # Install Transifex client and push strings to Transifex
+  # Reference: https://docs.transifex.com/integrations/github#section-integrating-with-travis-ci
+  - pip install transifex-client
+  - sudo echo $'[https://www.transifex.com]\nhostname = https://www.transifex.com\nusername = '"$TRANSIFEX_USER"$'\npassword = '"$TRANSIFEX_PASSWORD"$'\ntoken = '"$TRANSIFEX_API_TOKEN"$'\n' > ~/.transifexrc
+  - tx push --source --no-interactive
